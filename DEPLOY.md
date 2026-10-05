@@ -9,6 +9,12 @@ Misma arquitectura que Casa La Parota: sitio estático en **Cloudflare Pages**
 - `tours/*/tiles/` está en `.gitignore`: el repo solo lleva código, así el
   deploy queda muy por debajo del tope de 20 000 archivos de Pages.
 
+## Videos de portada en R2
+Los videos (`assets/render-casa-gil-*.mp4`) se sirven desde
+`tiles.dariuzph.com/casa-gil/media/`, **no** desde Pages: Pages no soporta
+peticiones por rango (206) y Safari/iPhone no reproduce video sin ellas.
+Si cambias el video: `scripts/subir-media.sh` (mismas claves que los tiles).
+
 ## Primera publicación del sitio (una sola vez)
 1. Crear el repo en GitHub (p. ej. `casa-gil-vr`) y conectarlo:
    ```bash

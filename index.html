@@ -963,7 +963,8 @@ const SITE_CONFIG = {
       heroVideo.setAttribute('playsinline', '');
       heroVideo.addEventListener('playing', () => heroVideo.classList.add('is-ready'), { once:true });
       heroVideo.addEventListener('error', () => heroVideo.remove());
-      heroVideo.src = 'assets/render-casa-gil-' + (ligero ? '720' : '1080') + '.mp4';
+      /* Se sirve desde R2: Cloudflare Pages no soporta rangos HTTP (206) y iPhone lo exige */
+      heroVideo.src = 'https://tiles.dariuzph.com/casa-gil/media/render-casa-gil-' + (ligero ? '720' : '1080') + '.mp4';
 
       const intentar = () => {
         const p = heroVideo.play();

@@ -21,3 +21,6 @@ tours/*/tiles/
 
 # Originales pesados (videos fuente): no se suben
 _originales/
+
+# Videos de portada: se sirven desde R2 (scripts/subir-media.sh)
+assets/*.mp4
