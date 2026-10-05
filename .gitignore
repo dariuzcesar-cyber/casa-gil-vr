@@ -18,3 +18,6 @@ node_modules/
 
 # Tiles del 360°: viven en Cloudflare R2 (tiles.dariuzph.com), no en git
 tours/*/tiles/
+
+# Originales pesados (videos fuente): no se suben
+_originales/

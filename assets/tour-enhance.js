@@ -41,7 +41,8 @@
     'Pasillo'  : 'Pasillos',
     'Lateral'  : 'Laterales',
     'Estudio'  : 'Estudio',
-    'Cuartito' : 'Cuartito'
+    'Cuartito' : 'Cuartito',
+    'Interior' : 'Interiores'
   };
 
   var ACENTOS = {
