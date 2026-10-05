@@ -11,6 +11,7 @@
 
 <meta property="og:title" content="Casa Gil — Bitácora Digital de Obra 360°">
 <meta property="og:description" content="Seguimiento del avance de la remodelación en recorridos fotométricos 360°.">
+<meta property="og:image" content="assets/render-casa-gil-poster.jpg">
 <meta property="og:type" content="website">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -170,8 +171,8 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 }
 .hero__media{
   position:absolute;inset:0;z-index:-2;
-  /* Pendiente: reemplazar por el render de Casa Gil (background-image:url('assets/hero-casa-gil.jpg')) */
-  background-image:radial-gradient(120% 90% at 70% 20%, rgba(197,160,89,.22) 0%, rgba(197,160,89,0) 55%), linear-gradient(160deg,#1b1e24 0%,#0e1013 70%);
+  /* Fotograma del render: se ve al instante mientras carga el video */
+  background-image:url('assets/render-casa-gil-poster.jpg'), linear-gradient(160deg,#1b1e24 0%,#0e1013 70%);
   background-size:cover;background-position:center 58%;
   transform:scale(1.04);
   animation:heroIn 1.8s var(--ease) both;
@@ -186,8 +187,8 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .hero__scrim{
   position:absolute;inset:0;z-index:-1;
   background:
-    linear-gradient(180deg, rgba(10,11,13,.86) 0%, rgba(10,11,13,.25) 32%, rgba(10,11,13,.82) 74%, var(--bg) 100%),
-    linear-gradient(90deg, rgba(10,11,13,.72) 0%, rgba(10,11,13,0) 58%);
+    linear-gradient(180deg, rgba(10,11,13,.78) 0%, rgba(10,11,13,.08) 30%, rgba(10,11,13,.62) 72%, var(--bg) 100%),
+    linear-gradient(90deg, rgba(10,11,13,.80) 0%, rgba(10,11,13,0) 62%);
 }
 .hero__inner{
   width:100%;max-width:var(--maxw);margin-inline:auto;
@@ -561,9 +562,7 @@ main{flex:1;width:100%;padding-block:clamp(2rem,5vw,3.4rem) clamp(2.5rem,6vw,4re
 <section class="hero">
   <div class="hero__media">
     <!-- Video del render de Casa Gil. Si el archivo aún no existe, se queda el degradado. -->
-    <video id="heroVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true">
-      <source src="assets/render-casa-gil.mp4" type="video/mp4">
-    </video>
+    <video id="heroVideo" muted loop playsinline preload="auto" aria-hidden="true"></video>
   </div>
   <div class="hero__scrim"></div>
   <div class="hero__inner">
@@ -948,14 +947,23 @@ const SITE_CONFIG = {
     }
   }
 
-  /* --- Video de portada: aparece solo cuando ya puede reproducirse --- */
+  /* --- Video de portada ---
+     Pantalla grande: 1080p (~18 MB). Móvil, pantalla chica o ahorro de datos:
+     720p (~6 MB). Aparece con un fundido cuando ya puede reproducirse. */
   const heroVideo = document.getElementById('heroVideo');
   if (heroVideo){
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-      heroVideo.removeAttribute('autoplay');
+    const conn = navigator.connection || {};
+    const ligero = window.innerWidth <= 900 || conn.saveData || /(^|-)2g$/.test(conn.effectiveType || '');
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      heroVideo.addEventListener('canplay', () => {
+        heroVideo.classList.add('is-ready');
+        const p = heroVideo.play(); if (p && p.catch) p.catch(() => {});
+      }, { once:true });
+      heroVideo.addEventListener('error', () => heroVideo.remove());
+      heroVideo.src = 'assets/render-casa-gil-' + (ligero ? '720' : '1080') + '.mp4';
+    } else {
+      heroVideo.remove();   // movimiento reducido: solo el fotograma
     }
-    heroVideo.addEventListener('canplay', () => heroVideo.classList.add('is-ready'), { once:true });
-    heroVideo.addEventListener('error', () => heroVideo.remove(), true);
   }
 
   buildTimeline();
