@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+**/.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Respaldos locales
+*.bak
+
+# Editores
+.vscode/
+.idea/
+
+# Herramientas
+node_modules/
+.wrangler/
+
+# Tiles del 360°: viven en Cloudflare R2 (tiles.dariuzph.com), no en git
+tours/*/tiles/
