@@ -562,7 +562,7 @@ main{flex:1;width:100%;padding-block:clamp(2rem,5vw,3.4rem) clamp(2.5rem,6vw,4re
 <section class="hero">
   <div class="hero__media">
     <!-- Video del render de Casa Gil. Si el archivo aún no existe, se queda el degradado. -->
-    <video id="heroVideo" muted loop playsinline preload="auto" aria-hidden="true"></video>
+    <video id="heroVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>
   </div>
   <div class="hero__scrim"></div>
   <div class="hero__inner">
@@ -955,12 +955,29 @@ const SITE_CONFIG = {
     const conn = navigator.connection || {};
     const ligero = window.innerWidth <= 900 || conn.saveData || /(^|-)2g$/.test(conn.effectiveType || '');
     if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-      heroVideo.addEventListener('canplay', () => {
-        heroVideo.classList.add('is-ready');
-        const p = heroVideo.play(); if (p && p.catch) p.catch(() => {});
-      }, { once:true });
+      /* iOS/Safari no precarga el video hasta que arranca: hay que pedir
+         play() directamente (muted + playsinline) y mostrarlo al empezar. */
+      heroVideo.muted = true;
+      heroVideo.defaultMuted = true;
+      heroVideo.setAttribute('muted', '');
+      heroVideo.setAttribute('playsinline', '');
+      heroVideo.addEventListener('playing', () => heroVideo.classList.add('is-ready'), { once:true });
       heroVideo.addEventListener('error', () => heroVideo.remove());
       heroVideo.src = 'assets/render-casa-gil-' + (ligero ? '720' : '1080') + '.mp4';
+
+      const intentar = () => {
+        const p = heroVideo.play();
+        if (p && p.catch) p.catch(() => {});
+      };
+      intentar();
+      /* Modo de bajo consumo / ahorro de batería: el navegador bloquea el
+         autoplay. Se reintenta con el primer toque o scroll. */
+      ['touchstart', 'pointerdown', 'scroll', 'keydown'].forEach(ev =>
+        window.addEventListener(ev, () => { if (heroVideo.paused) intentar(); },
+                                { once:true, passive:true }));
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && heroVideo.paused) intentar();
+      });
     } else {
       heroVideo.remove();   // movimiento reducido: solo el fotograma
     }
