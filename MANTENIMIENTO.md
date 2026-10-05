@@ -17,8 +17,8 @@ scripts/subir-tiles.sh          Sube los tiles de una etapa a Cloudflare R2
 tours/<etapa>/                  Salida de Marzipano + 3 líneas añadidas
 ```
 
-Pendiente de agregar: render de portada (`assets/hero-casa-gil.jpg`, ver
-comentario en `.hero__media`) y/o el video del recorrido animado.
+Portada: video del render en `assets/render-casa-gil.mp4` (si no existe, se ve el
+degradado de respaldo). Primer avance: `tours/septiembre-2026/`.
 
 ## Publicar una etapa nueva
 

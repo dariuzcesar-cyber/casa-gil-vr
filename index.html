@@ -176,6 +176,12 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   transform:scale(1.04);
   animation:heroIn 1.8s var(--ease) both;
 }
+.hero__media video{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center 58%;
+  opacity:0;transition:opacity 1.2s var(--ease);
+}
+.hero__media video.is-ready{opacity:1}
 @keyframes heroIn{from{transform:scale(1.11);opacity:0}to{transform:scale(1.04);opacity:1}}
 .hero__scrim{
   position:absolute;inset:0;z-index:-1;
@@ -553,7 +559,12 @@ main{flex:1;width:100%;padding-block:clamp(2rem,5vw,3.4rem) clamp(2.5rem,6vw,4re
 
 <!-- ============ HERO ============ -->
 <section class="hero">
-  <div class="hero__media"></div>
+  <div class="hero__media">
+    <!-- Video del render de Casa Gil. Si el archivo aún no existe, se queda el degradado. -->
+    <video id="heroVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+      <source src="assets/render-casa-gil.mp4" type="video/mp4">
+    </video>
+  </div>
   <div class="hero__scrim"></div>
   <div class="hero__inner">
     <div class="hero__text">
@@ -789,9 +800,10 @@ const SITE_CONFIG = {
     available: false
   },
 
-  // Línea de tiempo (PROVISIONAL: ajustar etapas/meses reales).
+  // Línea de tiempo. El primer avance de Casa Gil se capturó a finales de septiembre.
   // Para publicar una etapa: available -> true, scenes y date
   months: [
+    { slug:'septiembre-2026', label:'Septiembre', year:'2026', available:false, scenes:0, date:'' },
     { slug:'octubre-2026',    label:'Octubre',    year:'2026', available:false, scenes:0, date:'' },
     { slug:'noviembre-2026',  label:'Noviembre',  year:'2026', available:false, scenes:0, date:'' },
     { slug:'diciembre-2026',  label:'Diciembre',  year:'2026', available:false, scenes:0, date:'' }
@@ -934,6 +946,16 @@ const SITE_CONFIG = {
       caption.textContent = SITE_CONFIG.finalTour.caption;
       empty.classList.remove('is-shown');
     }
+  }
+
+  /* --- Video de portada: aparece solo cuando ya puede reproducirse --- */
+  const heroVideo = document.getElementById('heroVideo');
+  if (heroVideo){
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      heroVideo.removeAttribute('autoplay');
+    }
+    heroVideo.addEventListener('canplay', () => heroVideo.classList.add('is-ready'), { once:true });
+    heroVideo.addEventListener('error', () => heroVideo.remove(), true);
   }
 
   buildTimeline();
